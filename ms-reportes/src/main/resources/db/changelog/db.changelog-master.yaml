@@ -1,0 +1,122 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-reportes
+      author: codex
+      changes:
+        - createTable:
+            tableName: reportes
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nombre
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tipo_reporte
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resumen
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cantidad_pedidos
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_ventas
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: activo
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fecha_generacion
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: reportes
+            columns:
+              - column:
+                  name: nombre
+                  value: nombre 1
+              - column:
+                  name: tipo_reporte
+                  value: tipoReporte 1
+              - column:
+                  name: resumen
+                  value: resumen 1
+              - column:
+                  name: cantidad_pedidos
+                  valueNumeric: 10
+              - column:
+                  name: total_ventas
+                  valueNumeric: 1000.00
+              - column:
+                  name: activo
+                  valueBoolean: true
+              - column:
+                  name: fecha_generacion
+                  valueDate: 2026-01-10 10:00:00
+        - insert:
+            tableName: reportes
+            columns:
+              - column:
+                  name: nombre
+                  value: nombre 2
+              - column:
+                  name: tipo_reporte
+                  value: tipoReporte 2
+              - column:
+                  name: resumen
+                  value: resumen 2
+              - column:
+                  name: cantidad_pedidos
+                  valueNumeric: 20
+              - column:
+                  name: total_ventas
+                  valueNumeric: 2000.00
+              - column:
+                  name: activo
+                  valueBoolean: false
+              - column:
+                  name: fecha_generacion
+                  valueDate: 2026-02-10 10:00:00
+        - insert:
+            tableName: reportes
+            columns:
+              - column:
+                  name: nombre
+                  value: nombre 3
+              - column:
+                  name: tipo_reporte
+                  value: tipoReporte 3
+              - column:
+                  name: resumen
+                  value: resumen 3
+              - column:
+                  name: cantidad_pedidos
+                  valueNumeric: 30
+              - column:
+                  name: total_ventas
+                  valueNumeric: 3000.00
+              - column:
+                  name: activo
+                  valueBoolean: true
+              - column:
+                  name: fecha_generacion
+                  valueDate: 2026-03-10 10:00:00
