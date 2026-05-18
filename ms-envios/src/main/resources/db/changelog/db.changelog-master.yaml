@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1-create-envios
-      author: equipo
+      author: codex
       changes:
         - createTable:
             tableName: envios
@@ -15,48 +15,142 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: pedido_id
-                  type: int
+                  type: INT
                   constraints:
                     nullable: false
               - column:
                   name: usuario_id
-                  type: int
+                  type: INT
                   constraints:
                     nullable: false
               - column:
-                  name: codigo_envio
-                  type: varchar(150)
+                  name: codigo_seguimiento
+                  type: VARCHAR(150)
                   constraints:
                     nullable: false
               - column:
-                  name: direccion_entrega
-                  type: varchar(150)
+                  name: direccion_destino
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transportista
+                  type: VARCHAR(150)
                   constraints:
                     nullable: false
               - column:
                   name: costo_envio
-                  type: int
+                  type: DECIMAL(12,2)
                   constraints:
                     nullable: false
               - column:
                   name: entregado
-                  type: boolean
+                  type: BOOLEAN
                   constraints:
                     nullable: false
               - column:
                   name: fecha_envio
-                  type: date
+                  type: DATE
                   constraints:
                     nullable: false
               - column:
-                  name: estado_envio
-                  type: varchar(150)
+                  name: fecha_estimada_entrega
+                  type: DATE
                   constraints:
                     nullable: false
-
+        - insert:
+            tableName: envios
+            columns:
+              - column:
+                  name: pedido_id
+                  valueNumeric: 1
+              - column:
+                  name: usuario_id
+                  valueNumeric: 1
+              - column:
+                  name: codigo_seguimiento
+                  value: CODIGOSEGUIMIENTO-001
+              - column:
+                  name: direccion_destino
+                  value: direccionDestino 1
+              - column:
+                  name: transportista
+                  value: transportista 1
+              - column:
+                  name: costo_envio
+                  valueNumeric: 1000.00
+              - column:
+                  name: entregado
+                  valueBoolean: true
+              - column:
+                  name: fecha_envio
+                  valueDate: 2026-01-10
+              - column:
+                  name: fecha_estimada_entrega
+                  valueDate: 2027-01-10
+        - insert:
+            tableName: envios
+            columns:
+              - column:
+                  name: pedido_id
+                  valueNumeric: 2
+              - column:
+                  name: usuario_id
+                  valueNumeric: 2
+              - column:
+                  name: codigo_seguimiento
+                  value: CODIGOSEGUIMIENTO-002
+              - column:
+                  name: direccion_destino
+                  value: direccionDestino 2
+              - column:
+                  name: transportista
+                  value: transportista 2
+              - column:
+                  name: costo_envio
+                  valueNumeric: 2000.00
+              - column:
+                  name: entregado
+                  valueBoolean: false
+              - column:
+                  name: fecha_envio
+                  valueDate: 2026-02-10
+              - column:
+                  name: fecha_estimada_entrega
+                  valueDate: 2027-02-10
+        - insert:
+            tableName: envios
+            columns:
+              - column:
+                  name: pedido_id
+                  valueNumeric: 3
+              - column:
+                  name: usuario_id
+                  valueNumeric: 3
+              - column:
+                  name: codigo_seguimiento
+                  value: CODIGOSEGUIMIENTO-003
+              - column:
+                  name: direccion_destino
+                  value: direccionDestino 3
+              - column:
+                  name: transportista
+                  value: transportista 3
+              - column:
+                  name: costo_envio
+                  valueNumeric: 3000.00
+              - column:
+                  name: entregado
+                  valueBoolean: true
+              - column:
+                  name: fecha_envio
+                  valueDate: 2026-03-10
+              - column:
+                  name: fecha_estimada_entrega
+                  valueDate: 2027-03-10
   - changeSet:
-      id: 2-create-seguimientos
-      author: equipo
+      id: 1-create-seguimientos
+      author: codex
       changes:
         - createTable:
             tableName: seguimientos
@@ -70,219 +164,108 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: envio_id
-                  type: int
-                  constraints:
-                    nullable: false
-              - column:
-                  name: ubicacion_actual
-                  type: varchar(150)
+                  type: INT
                   constraints:
                     nullable: false
               - column:
                   name: estado
-                  type: varchar(150)
+                  type: VARCHAR(150)
                   constraints:
                     nullable: false
               - column:
-                  name: orden_evento
-                  type: int
+                  name: descripcion
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ubicacion
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: orden
+                  type: INT
                   constraints:
                     nullable: false
               - column:
                   name: visible_cliente
-                  type: boolean
+                  type: BOOLEAN
                   constraints:
                     nullable: false
               - column:
                   name: fecha_evento
-                  type: datetime
+                  type: DATETIME
                   constraints:
                     nullable: false
-              - column:
-                  name: comentario
-                  type: varchar(150)
-                  constraints:
-                    nullable: false
-        - addForeignKeyConstraint:
-            baseTableName: seguimientos
-            baseColumnNames: envio_id
-            referencedTableName: envios
-            referencedColumnNames: id
-            constraintName: fk_seguimientos_envio_id
-  - changeSet:
-      id: insert-envios-1
-      author: equipo
-      changes:
-        - insert:
-            tableName: envios
-            columns:
-              - column:
-                  name: pedido_id
-                  value: "1"
-              - column:
-                  name: usuario_id
-                  value: "1"
-              - column:
-                  name: codigo_envio
-                  value: "ENV-001"
-              - column:
-                  name: direccion_entrega
-                  value: "Av. Principal 100"
-              - column:
-                  name: costo_envio
-                  value: "3990"
-              - column:
-                  name: entregado
-                  value: "0"
-              - column:
-                  name: fecha_envio
-                  value: "2026-05-02"
-              - column:
-                  name: estado_envio
-                  value: "EN_RUTA"
-  - changeSet:
-      id: insert-envios-2
-      author: equipo
-      changes:
-        - insert:
-            tableName: envios
-            columns:
-              - column:
-                  name: pedido_id
-                  value: "2"
-              - column:
-                  name: usuario_id
-                  value: "2"
-              - column:
-                  name: codigo_envio
-                  value: "ENV-002"
-              - column:
-                  name: direccion_entrega
-                  value: "Av. Principal 100"
-              - column:
-                  name: costo_envio
-                  value: "3991"
-              - column:
-                  name: entregado
-                  value: "1"
-              - column:
-                  name: fecha_envio
-                  value: "2026-05-02"
-              - column:
-                  name: estado_envio
-                  value: "EN_RUTA"
-  - changeSet:
-      id: insert-envios-3
-      author: equipo
-      changes:
-        - insert:
-            tableName: envios
-            columns:
-              - column:
-                  name: pedido_id
-                  value: "3"
-              - column:
-                  name: usuario_id
-                  value: "3"
-              - column:
-                  name: codigo_envio
-                  value: "ENV-003"
-              - column:
-                  name: direccion_entrega
-                  value: "Av. Principal 100"
-              - column:
-                  name: costo_envio
-                  value: "3992"
-              - column:
-                  name: entregado
-                  value: "0"
-              - column:
-                  name: fecha_envio
-                  value: "2026-05-02"
-              - column:
-                  name: estado_envio
-                  value: "EN_RUTA"
-  - changeSet:
-      id: insert-seguimientos-1
-      author: equipo
-      changes:
         - insert:
             tableName: seguimientos
             columns:
               - column:
                   name: envio_id
-                  value: "1"
-              - column:
-                  name: ubicacion_actual
-                  value: "Centro distribucion"
+                  valueNumeric: 1
               - column:
                   name: estado
-                  value: "EN_TRANSITO"
+                  value: CREADO
               - column:
-                  name: orden_evento
-                  value: "1"
+                  name: descripcion
+                  value: descripcion 1
+              - column:
+                  name: ubicacion
+                  value: ubicacion 1
+              - column:
+                  name: orden
+                  valueNumeric: 10
               - column:
                   name: visible_cliente
-                  value: "1"
+                  valueBoolean: true
               - column:
                   name: fecha_evento
-                  value: "2026-05-02 09:00:00"
-              - column:
-                  name: comentario
-                  value: "Paquete recibido por transporte"
-  - changeSet:
-      id: insert-seguimientos-2
-      author: equipo
-      changes:
+                  valueDate: 2026-01-10 10:00:00
         - insert:
             tableName: seguimientos
             columns:
               - column:
                   name: envio_id
-                  value: "2"
-              - column:
-                  name: ubicacion_actual
-                  value: "Centro distribucion"
+                  valueNumeric: 2
               - column:
                   name: estado
-                  value: "EN_TRANSITO"
+                  value: CREADO
               - column:
-                  name: orden_evento
-                  value: "2"
+                  name: descripcion
+                  value: descripcion 2
+              - column:
+                  name: ubicacion
+                  value: ubicacion 2
+              - column:
+                  name: orden
+                  valueNumeric: 20
               - column:
                   name: visible_cliente
-                  value: "0"
+                  valueBoolean: false
               - column:
                   name: fecha_evento
-                  value: "2026-05-02 09:00:00"
-              - column:
-                  name: comentario
-                  value: "Paquete recibido por transporte"
-  - changeSet:
-      id: insert-seguimientos-3
-      author: equipo
-      changes:
+                  valueDate: 2026-02-10 10:00:00
         - insert:
             tableName: seguimientos
             columns:
               - column:
                   name: envio_id
-                  value: "3"
-              - column:
-                  name: ubicacion_actual
-                  value: "Centro distribucion"
+                  valueNumeric: 3
               - column:
                   name: estado
-                  value: "EN_TRANSITO"
+                  value: CREADO
               - column:
-                  name: orden_evento
-                  value: "3"
+                  name: descripcion
+                  value: descripcion 3
+              - column:
+                  name: ubicacion
+                  value: ubicacion 3
+              - column:
+                  name: orden
+                  valueNumeric: 30
               - column:
                   name: visible_cliente
-                  value: "1"
+                  valueBoolean: true
               - column:
                   name: fecha_evento
-                  value: "2026-05-02 09:00:00"
-              - column:
-                  name: comentario
-                  value: "Paquete recibido por transporte"
+                  valueDate: 2026-03-10 10:00:00
