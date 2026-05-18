@@ -1,0 +1,136 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-empleados
+      author: codex
+      changes:
+        - createTable:
+            tableName: empleados
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: sucursal_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nombre
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cargo
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: horas_semanales
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sueldo
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: activo
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fecha_ingreso
+                  type: DATE
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: empleados
+            columns:
+              - column:
+                  name: sucursal_id
+                  valueNumeric: 1
+              - column:
+                  name: nombre
+                  value: nombre 1
+              - column:
+                  name: email
+                  value: email1@correo.cl
+              - column:
+                  name: cargo
+                  value: cargo 1
+              - column:
+                  name: horas_semanales
+                  valueNumeric: 10
+              - column:
+                  name: sueldo
+                  valueNumeric: 1000.00
+              - column:
+                  name: activo
+                  valueBoolean: true
+              - column:
+                  name: fecha_ingreso
+                  valueDate: 2026-01-10
+        - insert:
+            tableName: empleados
+            columns:
+              - column:
+                  name: sucursal_id
+                  valueNumeric: 2
+              - column:
+                  name: nombre
+                  value: nombre 2
+              - column:
+                  name: email
+                  value: email2@correo.cl
+              - column:
+                  name: cargo
+                  value: cargo 2
+              - column:
+                  name: horas_semanales
+                  valueNumeric: 20
+              - column:
+                  name: sueldo
+                  valueNumeric: 2000.00
+              - column:
+                  name: activo
+                  valueBoolean: false
+              - column:
+                  name: fecha_ingreso
+                  valueDate: 2026-02-10
+        - insert:
+            tableName: empleados
+            columns:
+              - column:
+                  name: sucursal_id
+                  valueNumeric: 3
+              - column:
+                  name: nombre
+                  value: nombre 3
+              - column:
+                  name: email
+                  value: email3@correo.cl
+              - column:
+                  name: cargo
+                  value: cargo 3
+              - column:
+                  name: horas_semanales
+                  valueNumeric: 30
+              - column:
+                  name: sueldo
+                  valueNumeric: 3000.00
+              - column:
+                  name: activo
+                  valueBoolean: true
+              - column:
+                  name: fecha_ingreso
+                  valueDate: 2026-03-10
