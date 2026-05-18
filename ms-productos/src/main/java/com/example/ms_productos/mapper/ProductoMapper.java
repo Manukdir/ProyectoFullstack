@@ -1,47 +1,33 @@
 package com.example.ms_productos.mapper;
 
-import com.example.ms_productos.dto.ProductoDTO;
-import com.example.ms_productos.dto.ProductoRequestDTO;
+import com.example.ms_productos.dto.request.ProductoRequestDTO;
+import com.example.ms_productos.dto.response.ProductoResponseDTO;
 import com.example.ms_productos.model.Producto;
-import com.example.ms_productos.model.Categoria;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProductoMapper {
 
-    public ProductoDTO toDTO(Producto producto) {
-        if (producto == null) {
-            return null;
-        }
-        ProductoDTO dto = new ProductoDTO();
-        dto.setId(producto.getId());
-                if (producto.getCategoria() != null) {
-                    dto.setCategoriaId(producto.getCategoria().getId());
-                }
-        dto.setNombre(producto.getNombre());
-        dto.setDescripcion(producto.getDescripcion());
-        dto.setSku(producto.getSku());
-        dto.setPrecio(producto.getPrecio());
-        dto.setStock(producto.getStock());
-        dto.setActivo(producto.getActivo());
-        dto.setFechaIngreso(producto.getFechaIngreso());
+    public Producto toEntity(ProductoRequestDTO dto) {
+        Producto entity = new Producto();
+        entity.setNombre(dto.getNombre());
+        entity.setCodigoSku(dto.getCodigoSku());
+        entity.setPrecio(dto.getPrecio());
+        entity.setStock(dto.getStock());
+        entity.setFechaIngreso(dto.getFechaIngreso());
+        entity.setDisponible(dto.isDisponible());
+        return entity;
+    }
+
+    public ProductoResponseDTO toResponseDTO(Producto entity) {
+        ProductoResponseDTO dto = new ProductoResponseDTO();
+        dto.setId(entity.getId());
+        dto.setNombre(entity.getNombre());
+        dto.setCodigoSku(entity.getCodigoSku());
+        dto.setPrecio(entity.getPrecio());
+        dto.setStock(entity.getStock());
+        dto.setFechaIngreso(entity.getFechaIngreso());
+        dto.setDisponible(entity.isDisponible());
         return dto;
-    }
-
-    public Producto toEntity(ProductoRequestDTO dto, Categoria categoria) {
-        Producto producto = new Producto();
-        updateEntity(producto, dto);
-        producto.setCategoria(categoria);
-        return producto;
-    }
-
-    public void updateEntity(Producto producto, ProductoRequestDTO dto) {
-                producto.setNombre(dto.getNombre());
-        producto.setDescripcion(dto.getDescripcion());
-        producto.setSku(dto.getSku());
-        producto.setPrecio(dto.getPrecio());
-        producto.setStock(dto.getStock());
-        producto.setActivo(dto.getActivo());
-        producto.setFechaIngreso(dto.getFechaIngreso());
     }
 }

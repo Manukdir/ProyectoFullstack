@@ -1,16 +1,13 @@
-package com.example.ms_productos;
+package com.example.ms_usuarios;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MsProductosApplication {
+public class MsUsuariosApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MsProductosApplication.class, args);
+		SpringApplication.run(MsUsuariosApplication.class, args);
 	}
 
 }
-
-
-

@@ -1,96 +1,94 @@
 package com.example.ms_productos.service;
 
-import com.example.ms_productos.dto.ProductoDTO;
-import com.example.ms_productos.dto.ProductoRequestDTO;
+import com.example.ms_productos.dto.request.ProductoRequestDTO;
+
+
+import com.example.ms_productos.dto.request.ProductoRequestDTO;
+import com.example.ms_productos.dto.response.ProductoResponseDTO;
+import com.example.ms_productos.exception.ResourceNotFoundException;
 import com.example.ms_productos.mapper.ProductoMapper;
 import com.example.ms_productos.model.Categoria;
 import com.example.ms_productos.model.Producto;
 import com.example.ms_productos.repository.CategoriaRepository;
 import com.example.ms_productos.repository.ProductoRepository;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ProductoService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProductoService.class);
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final ProductoMapper productoMapper;
 
-        @Autowired
-        private ProductoRepository productoRepository;
-    @Autowired
-        private ProductoMapper productoMapper;
-    @Autowired
-        private CategoriaRepository categoriaRepository;
-
-    public List<ProductoDTO> listar() {
-        log.info("Listando productos");
-        return productoRepository.findAll().stream().map(productoMapper::toDTO).collect(Collectors.toList());
+    public List<ProductoResponseDTO> listarTodos() {
+        log.info("Listando todos los productos");
+        return productoRepository.findAll().stream()
+                .map(productoMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public ProductoDTO obtenerPorId(Integer id) {
-        log.info("Buscando producto con id {}", id);
-        Optional<Producto> optional = productoRepository.findById(id);
-        return optional.map(productoMapper::toDTO).orElse(null);
+    public ProductoResponseDTO buscarPorId(Integer id) {
+        log.info("Buscando producto con ID: {}", id);
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+        return productoMapper.toResponseDTO(producto);
     }
 
-    public ProductoDTO crear(ProductoRequestDTO dto) {
+    public ProductoResponseDTO guardar(ProductoRequestDTO dto) {
         try {
-                        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId()).orElse(null);
-                        if (categoria == null) {
-                            return null;
-                        }
+            log.info("Guardando nuevo producto");
+            Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrada con ID: " + dto.getCategoriaId()));
 
-            Producto producto = productoMapper.toEntity(dto, categoria);
-            Producto guardado = productoRepository.save(producto);
-            log.info("Producto creado con id {}", guardado.getId());
-            return productoMapper.toDTO(guardado);
-        } catch (Exception e) {
-            log.error("Error al crear producto", e);
-            return null;
-        }
-    }
-
-    public ProductoDTO actualizar(Integer id, ProductoRequestDTO dto) {
-        try {
-            Optional<Producto> optional = productoRepository.findById(id);
-            if (optional.isEmpty()) {
-                return null;
-            }
-                        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId()).orElse(null);
-                        if (categoria == null) {
-                            return null;
-                        }
-            Producto producto = optional.get();
-            productoMapper.updateEntity(producto, dto);
+            Producto producto = productoMapper.toEntity(dto);
             producto.setCategoria(categoria);
-            Producto guardado = productoRepository.save(producto);
-            log.info("Producto actualizado con id {}", guardado.getId());
-            return productoMapper.toDTO(guardado);
+            return productoMapper.toResponseDTO(productoRepository.save(producto));
+        } catch (ResourceNotFoundException e) {
+            log.error("Error de validacion al guardar producto: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
-            log.error("Error al actualizar producto", e);
-            return null;
+            log.error("Error al guardar producto: {}", e.getMessage());
+            throw new RuntimeException("Error interno al guardar el producto");
         }
     }
 
-    public boolean eliminar(Integer id) {
-        if (!productoRepository.existsById(id)) {
-            return false;
-        }
-        productoRepository.deleteById(id);
-        log.info("Producto eliminado con id {}", id);
-        return true;
+    public ProductoResponseDTO actualizar(Integer id, ProductoRequestDTO dto) {
+        log.info("Actualizando producto con ID: {}", id);
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrada con ID: " + dto.getCategoriaId()));
+
+        producto.setNombre(dto.getNombre());
+        producto.setCodigoSku(dto.getCodigoSku());
+        producto.setPrecio(dto.getPrecio());
+        producto.setStock(dto.getStock());
+        producto.setFechaIngreso(dto.getFechaIngreso());
+        producto.setDisponible(dto.isDisponible());
+        producto.setCategoria(categoria);
+
+        return productoMapper.toResponseDTO(productoRepository.save(producto));
     }
 
-    public List<ProductoDTO> buscarPorNombreYPrecio(String nombre, BigDecimal precioMaximo) {
-        log.info("Ejecutando consulta personalizada de productos");
-        return productoRepository.findByNombreContainingIgnoreCaseAndPrecioLessThan(nombre, precioMaximo).stream().map(productoMapper::toDTO).collect(Collectors.toList());
+    public void eliminar(Integer id) {
+        log.info("Eliminando producto con ID: {}", id);
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+        productoRepository.delete(producto);
     }
 
-
+    public List<ProductoResponseDTO> buscarPorNombreYPrecio(String nombre, Double precio) {
+        log.info("Buscando productos por nombre: {} y precio menor a: {}", nombre, precio);
+        return productoRepository.findByNombreContainingIgnoreCaseAndPrecioLessThan(nombre, precio).stream()
+                .map(productoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 }
