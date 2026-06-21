@@ -4,5 +4,8 @@ import com.example.ms_envios.model.Seguimiento;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * Acceso CRUD a los eventos de seguimiento.
+ */
 public interface SeguimientoRepository extends JpaRepository<Seguimiento, Integer> {
 }

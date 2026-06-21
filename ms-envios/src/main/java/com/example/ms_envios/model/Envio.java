@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad JPA que representa un envío almacenado en MySQL.
+ */
 @Entity
 @Table(name = "envios")
 @Data

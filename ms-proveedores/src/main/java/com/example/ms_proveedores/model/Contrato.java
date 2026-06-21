@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad JPA de un contrato perteneciente a un proveedor.
+ */
 @Entity
 @Table(name = "contratos")
 @Data

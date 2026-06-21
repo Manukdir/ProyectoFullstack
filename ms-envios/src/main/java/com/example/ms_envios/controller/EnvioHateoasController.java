@@ -2,6 +2,8 @@ package com.example.ms_envios.controller;
 
 import com.example.ms_envios.dto.EnvioDTO;
 import com.example.ms_envios.service.EnvioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -14,8 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Agrega enlaces HATEOAS a las respuestas de envíos.
+ */
 @RestController
 @RequestMapping("/api/v1/hateoas/envios")
+@Tag(name = "Envíos HATEOAS", description = "Envíos con enlaces de navegación")
 public class EnvioHateoasController {
 
     private final EnvioService envioService;
@@ -25,6 +31,7 @@ public class EnvioHateoasController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar envíos con enlaces HATEOAS")
     public ResponseEntity<CollectionModel<EntityModel<EnvioDTO>>> listarConLinks() {
         List<EntityModel<EnvioDTO>> envios = envioService.listar().stream()
                 .map(this::agregarLinks)
@@ -34,6 +41,7 @@ public class EnvioHateoasController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener un envío con enlaces HATEOAS")
     public ResponseEntity<EntityModel<EnvioDTO>> obtenerConLinks(@PathVariable Integer id) {
         EnvioDTO envio = envioService.obtenerPorId(id);
         if (envio == null) {

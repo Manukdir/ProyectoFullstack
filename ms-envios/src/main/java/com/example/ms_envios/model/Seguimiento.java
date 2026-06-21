@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad JPA que registra un cambio de estado o ubicación del envío.
+ */
 @Entity
 @Table(name = "seguimientos")
 @Data

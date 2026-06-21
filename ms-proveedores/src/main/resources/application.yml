@@ -1,6 +1,8 @@
 spring:
+  # Nombre que será visible en el panel de Eureka.
   application:
-    name: ms-proveedores
+    name: MS-PROVEEDORES
+  # Conexión al esquema usado por proveedores en MySQL.
   datasource:
     url: jdbc:mysql://localhost:3306/prueba1?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
@@ -18,18 +20,21 @@ server:
   port: 8087
 
 eureka:
+  # Registra este microservicio para que el Gateway pueda encontrarlo.
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
 
 servicios:
+  # Dirección local del catálogo consultado mediante Feign.
   productos:
     url: http://localhost:8082
 
 springdoc:
-  enable-hateoas: false
   swagger-ui:
     path: /swagger-ui.html
 

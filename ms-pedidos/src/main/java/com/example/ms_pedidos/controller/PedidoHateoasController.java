@@ -2,6 +2,8 @@ package com.example.ms_pedidos.controller;
 
 import com.example.ms_pedidos.dto.PedidoDTO;
 import com.example.ms_pedidos.service.PedidoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -14,8 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Entrega pedidos con enlaces HATEOAS para indicar acciones relacionadas.
+ */
 @RestController
 @RequestMapping("/api/v1/hateoas/pedidos")
+@Tag(name = "Pedidos HATEOAS", description = "Pedidos con enlaces de navegación")
 public class PedidoHateoasController {
 
     private final PedidoService pedidoService;
@@ -25,6 +31,7 @@ public class PedidoHateoasController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar pedidos con enlaces HATEOAS")
     public ResponseEntity<CollectionModel<EntityModel<PedidoDTO>>> listarConLinks() {
         List<EntityModel<PedidoDTO>> pedidos = pedidoService.listar().stream()
                 .map(this::agregarLinks)
@@ -34,6 +41,7 @@ public class PedidoHateoasController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener un pedido con enlaces HATEOAS")
     public ResponseEntity<EntityModel<PedidoDTO>> obtenerConLinks(@PathVariable Integer id) {
         PedidoDTO pedido = pedidoService.obtenerPorId(id);
         if (pedido == null) {

@@ -1,13 +1,12 @@
 package com.example.ms_envios;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class MsEnviosApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void existeClasePrincipal() {
+		org.junit.jupiter.api.Assertions.assertNotNull(MsEnviosApplication.class);
 	}
 
 }

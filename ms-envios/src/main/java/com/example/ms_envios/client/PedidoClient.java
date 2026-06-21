@@ -5,7 +5,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "ms-pedidos", url = "${servicios.pedidos.url}")
+/**
+ * Consulta pedidos usando el nombre registrado por el servicio en Eureka.
+ */
+@FeignClient(name = "MS-PEDIDOS")
 public interface PedidoClient {
 
     @GetMapping("/api/v1/pedidos/{id}")

@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/**
+ * Repositorio Spring Data para consultar y guardar envíos.
+ */
 public interface EnvioRepository extends JpaRepository<Envio, Integer> {
 
     @Query("SELECT e FROM Envio e WHERE e.fechaEnvio BETWEEN :desde AND :hasta AND e.entregado = false")

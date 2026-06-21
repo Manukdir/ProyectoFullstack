@@ -6,6 +6,9 @@ import com.example.ms_envios.model.Seguimiento;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Convierte los datos de seguimiento sin exponer directamente la entidad JPA.
+ */
 @Component
 public class SeguimientoMapper {
 

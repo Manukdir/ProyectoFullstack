@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad JPA de un producto asociado a un pedido.
+ */
 @Entity
 @Table(name = "detalle_pedidos")
 @Data

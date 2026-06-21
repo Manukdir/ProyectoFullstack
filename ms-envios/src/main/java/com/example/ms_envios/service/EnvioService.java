@@ -2,18 +2,21 @@ package com.example.ms_envios.service;
 
 import com.example.ms_envios.dto.EnvioDTO;
 import com.example.ms_envios.dto.EnvioRequestDTO;
+import com.example.ms_envios.exception.ResourceNotFoundException;
 import com.example.ms_envios.mapper.EnvioMapper;
 import com.example.ms_envios.model.Envio;
 import com.example.ms_envios.repository.EnvioRepository;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Contiene las reglas de negocio y operaciones principales de los envíos.
+ */
 @Service
 public class EnvioService {
 
@@ -31,44 +34,30 @@ public class EnvioService {
 
     public EnvioDTO obtenerPorId(Integer id) {
         log.info("Buscando envio con id {}", id);
-        Optional<Envio> optional = envioRepository.findById(id);
-        return optional.map(envioMapper::toDTO).orElse(null);
+        Envio envio = envioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Envío no encontrado con id " + id));
+        return envioMapper.toDTO(envio);
     }
 
     public EnvioDTO crear(EnvioRequestDTO dto) {
-        try {
-
-            Envio envio = envioMapper.toEntity(dto);
-            Envio guardado = envioRepository.save(envio);
-            log.info("Envio creado con id {}", guardado.getId());
-            return envioMapper.toDTO(guardado);
-        } catch (Exception e) {
-            log.error("Error al crear envio", e);
-            return null;
-        }
+        Envio envio = envioMapper.toEntity(dto);
+        Envio guardado = envioRepository.save(envio);
+        log.info("Envío creado con id {}", guardado.getId());
+        return envioMapper.toDTO(guardado);
     }
 
     public EnvioDTO actualizar(Integer id, EnvioRequestDTO dto) {
-        try {
-            Optional<Envio> optional = envioRepository.findById(id);
-            if (optional.isEmpty()) {
-                return null;
-            }
-            Envio envio = optional.get();
-            envioMapper.updateEntity(envio, dto);
-            
-            Envio guardado = envioRepository.save(envio);
-            log.info("Envio actualizado con id {}", guardado.getId());
-            return envioMapper.toDTO(guardado);
-        } catch (Exception e) {
-            log.error("Error al actualizar envio", e);
-            return null;
-        }
+        Envio envio = envioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Envío no encontrado con id " + id));
+        envioMapper.updateEntity(envio, dto);
+        Envio guardado = envioRepository.save(envio);
+        log.info("Envío actualizado con id {}", guardado.getId());
+        return envioMapper.toDTO(guardado);
     }
 
     public boolean eliminar(Integer id) {
         if (!envioRepository.existsById(id)) {
-            return false;
+            throw new ResourceNotFoundException("Envío no encontrado con id " + id);
         }
         envioRepository.deleteById(id);
         log.info("Envio eliminado con id {}", id);

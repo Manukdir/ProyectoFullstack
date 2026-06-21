@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad JPA que representa la tabla pedidos.
+ */
 @Entity
 @Table(name = "pedidos")
 @Data

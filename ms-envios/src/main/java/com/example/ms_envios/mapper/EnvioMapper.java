@@ -6,6 +6,9 @@ import com.example.ms_envios.model.Envio;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Convierte entre la entidad Envio y sus DTO.
+ */
 @Component
 public class EnvioMapper {
 

@@ -6,6 +6,9 @@ import com.example.ms_pedidos.model.DetallePedido;
 import com.example.ms_pedidos.model.Pedido;
 import org.springframework.stereotype.Component;
 
+/**
+ * Separa el modelo de base de datos de los datos enviados al cliente.
+ */
 @Component
 public class DetallePedidoMapper {
 

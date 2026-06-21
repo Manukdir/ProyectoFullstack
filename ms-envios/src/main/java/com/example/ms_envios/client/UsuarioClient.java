@@ -5,7 +5,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "ms-usuarios", url = "${servicios.usuarios.url}")
+/**
+ * Cliente Feign para obtener la información del usuario que recibe el envío.
+ */
+@FeignClient(name = "MS-USUARIOS", url = "${servicios.usuarios.url}")
 public interface UsuarioClient {
 
     @GetMapping("/api/v1/usuarios/{id}")

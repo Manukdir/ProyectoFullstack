@@ -2,17 +2,20 @@ package com.example.ms_envios.service;
 
 import com.example.ms_envios.dto.SeguimientoDTO;
 import com.example.ms_envios.dto.SeguimientoRequestDTO;
+import com.example.ms_envios.exception.ResourceNotFoundException;
 import com.example.ms_envios.mapper.SeguimientoMapper;
 import com.example.ms_envios.model.Seguimiento;
 import com.example.ms_envios.repository.SeguimientoRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Gestiona los eventos de seguimiento asociados a cada envío.
+ */
 @Service
 public class SeguimientoService {
 
@@ -30,46 +33,32 @@ public class SeguimientoService {
 
     public SeguimientoDTO obtenerPorId(Integer id) {
         log.info("Buscando seguimiento con id {}", id);
-        Optional<Seguimiento> optional = seguimientoRepository.findById(id);
-        return optional.map(seguimientoMapper::toDTO).orElse(null);
+        Seguimiento seguimiento = seguimientoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Seguimiento no encontrado con id " + id));
+        return seguimientoMapper.toDTO(seguimiento);
     }
 
     public SeguimientoDTO crear(SeguimientoRequestDTO dto) {
-        try {
-            
-
-            Seguimiento seguimiento = seguimientoMapper.toEntity(dto);
-            Seguimiento guardado = seguimientoRepository.save(seguimiento);
-            log.info("Seguimiento creado con id {}", guardado.getId());
-            return seguimientoMapper.toDTO(guardado);
-        } catch (Exception e) {
-            log.error("Error al crear seguimiento", e);
-            return null;
-        }
+        Seguimiento seguimiento = seguimientoMapper.toEntity(dto);
+        Seguimiento guardado = seguimientoRepository.save(seguimiento);
+        log.info("Seguimiento creado con id {}", guardado.getId());
+        return seguimientoMapper.toDTO(guardado);
     }
 
     public SeguimientoDTO actualizar(Integer id, SeguimientoRequestDTO dto) {
-        try {
-            Optional<Seguimiento> optional = seguimientoRepository.findById(id);
-            if (optional.isEmpty()) {
-                return null;
-            }
-            
-            Seguimiento seguimiento = optional.get();
-            seguimientoMapper.updateEntity(seguimiento, dto);
-            
-            Seguimiento guardado = seguimientoRepository.save(seguimiento);
-            log.info("Seguimiento actualizado con id {}", guardado.getId());
-            return seguimientoMapper.toDTO(guardado);
-        } catch (Exception e) {
-            log.error("Error al actualizar seguimiento", e);
-            return null;
-        }
+        Seguimiento seguimiento = seguimientoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Seguimiento no encontrado con id " + id));
+        seguimientoMapper.updateEntity(seguimiento, dto);
+        Seguimiento guardado = seguimientoRepository.save(seguimiento);
+        log.info("Seguimiento actualizado con id {}", guardado.getId());
+        return seguimientoMapper.toDTO(guardado);
     }
 
     public boolean eliminar(Integer id) {
         if (!seguimientoRepository.existsById(id)) {
-            return false;
+            throw new ResourceNotFoundException("Seguimiento no encontrado con id " + id);
         }
         seguimientoRepository.deleteById(id);
         log.info("Seguimiento eliminado con id {}", id);

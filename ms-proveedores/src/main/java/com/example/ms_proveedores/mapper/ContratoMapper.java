@@ -6,6 +6,9 @@ import com.example.ms_proveedores.model.Contrato;
 import com.example.ms_proveedores.model.Proveedor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Convierte contratos y mantiene la relación con su proveedor.
+ */
 @Component
 public class ContratoMapper {
 

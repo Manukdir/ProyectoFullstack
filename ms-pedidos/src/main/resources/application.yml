@@ -1,6 +1,8 @@
 spring:
+  # Nombre con el que este servicio se registra en Eureka.
   application:
-    name: ms-pedidos
+    name: MS-PEDIDOS
+  # Conexión local a MySQL administrado por Laragon.
   datasource:
     url: jdbc:mysql://localhost:3306/prueba3?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
@@ -18,23 +20,27 @@ spring:
     locations: classpath:db/migration
 
 server:
+  # Cada microservicio utiliza un puerto distinto.
   port: 8084
 
 eureka:
+  # Eureka permite que otros servicios encuentren a MS-PEDIDOS por su nombre.
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
 
 servicios:
+  # Estos servicios todavía se consumen mediante su URL local.
   usuarios:
     url: http://localhost:8081
   productos:
     url: http://localhost:8082
 
 springdoc:
-  enable-hateoas: false
   swagger-ui:
     path: /swagger-ui.html
 

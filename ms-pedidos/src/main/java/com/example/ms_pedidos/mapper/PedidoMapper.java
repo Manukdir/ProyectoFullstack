@@ -6,6 +6,9 @@ import com.example.ms_pedidos.model.Pedido;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Convierte entre la entidad Pedido y los DTO usados por la API.
+ */
 @Component
 public class PedidoMapper {
 

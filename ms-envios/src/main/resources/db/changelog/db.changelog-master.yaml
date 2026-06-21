@@ -1,7 +1,12 @@
 databaseChangeLog:
   - changeSet:
-      id: 1-create-envios
-      author: codex
+      id: initial-create-envios
+      author: equipo
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: envios
       changes:
         - createTable:
             tableName: envios
@@ -149,8 +154,13 @@ databaseChangeLog:
                   name: fecha_estimada_entrega
                   valueDate: 2027-03-10
   - changeSet:
-      id: 1-create-seguimientos
-      author: codex
+      id: initial-create-seguimientos
+      author: equipo
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: seguimientos
       changes:
         - createTable:
             tableName: seguimientos

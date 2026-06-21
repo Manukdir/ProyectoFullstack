@@ -2,17 +2,20 @@ package com.example.ms_proveedores.service;
 
 import com.example.ms_proveedores.dto.ProveedorDTO;
 import com.example.ms_proveedores.dto.ProveedorRequestDTO;
+import com.example.ms_proveedores.exception.ResourceNotFoundException;
 import com.example.ms_proveedores.mapper.ProveedorMapper;
 import com.example.ms_proveedores.model.Proveedor;
 import com.example.ms_proveedores.repository.ProveedorRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementa la lógica de negocio de los proveedores.
+ */
 @Service
 public class ProveedorService {
 
@@ -30,46 +33,32 @@ public class ProveedorService {
 
     public ProveedorDTO obtenerPorId(Integer id) {
         log.info("Buscando proveedor con id {}", id);
-        Optional<Proveedor> optional = proveedorRepository.findById(id);
-        return optional.map(proveedorMapper::toDTO).orElse(null);
+        Proveedor proveedor = proveedorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Proveedor no encontrado con id " + id));
+        return proveedorMapper.toDTO(proveedor);
     }
 
     public ProveedorDTO crear(ProveedorRequestDTO dto) {
-        try {
-            
-
-            Proveedor proveedor = proveedorMapper.toEntity(dto);
-            Proveedor guardado = proveedorRepository.save(proveedor);
-            log.info("Proveedor creado con id {}", guardado.getId());
-            return proveedorMapper.toDTO(guardado);
-        } catch (Exception e) {
-            log.error("Error al crear proveedor", e);
-            return null;
-        }
+        Proveedor proveedor = proveedorMapper.toEntity(dto);
+        Proveedor guardado = proveedorRepository.save(proveedor);
+        log.info("Proveedor creado con id {}", guardado.getId());
+        return proveedorMapper.toDTO(guardado);
     }
 
     public ProveedorDTO actualizar(Integer id, ProveedorRequestDTO dto) {
-        try {
-            Optional<Proveedor> optional = proveedorRepository.findById(id);
-            if (optional.isEmpty()) {
-                return null;
-            }
-            
-            Proveedor proveedor = optional.get();
-            proveedorMapper.updateEntity(proveedor, dto);
-            
-            Proveedor guardado = proveedorRepository.save(proveedor);
-            log.info("Proveedor actualizado con id {}", guardado.getId());
-            return proveedorMapper.toDTO(guardado);
-        } catch (Exception e) {
-            log.error("Error al actualizar proveedor", e);
-            return null;
-        }
+        Proveedor proveedor = proveedorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Proveedor no encontrado con id " + id));
+        proveedorMapper.updateEntity(proveedor, dto);
+        Proveedor guardado = proveedorRepository.save(proveedor);
+        log.info("Proveedor actualizado con id {}", guardado.getId());
+        return proveedorMapper.toDTO(guardado);
     }
 
     public boolean eliminar(Integer id) {
         if (!proveedorRepository.existsById(id)) {
-            return false;
+            throw new ResourceNotFoundException("Proveedor no encontrado con id " + id);
         }
         proveedorRepository.deleteById(id);
         log.info("Proveedor eliminado con id {}", id);

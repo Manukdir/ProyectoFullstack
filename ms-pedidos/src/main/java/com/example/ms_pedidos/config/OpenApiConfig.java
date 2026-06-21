@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+/**
+ * Configura el título y la descripción mostrados en Swagger.
+ */
 public class OpenApiConfig {
 
     @Bean
