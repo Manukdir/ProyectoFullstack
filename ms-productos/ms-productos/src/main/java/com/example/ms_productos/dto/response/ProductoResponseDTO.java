@@ -12,4 +12,7 @@ public class ProductoResponseDTO {
     private Integer stock;
     private LocalDate fechaIngreso;
     private boolean disponible;
+
+    private Integer categoriaId;
+    private String categoriaNombre;
 }
