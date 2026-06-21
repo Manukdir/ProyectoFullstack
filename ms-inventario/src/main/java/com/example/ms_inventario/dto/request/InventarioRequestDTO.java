@@ -23,4 +23,8 @@ public class InventarioRequestDTO {
     @NotNull(message = "La fecha de apertura es obligatoria")
     @PastOrPresent(message = "La fecha no puede ser en el futuro")
     private LocalDate fechaApertura;
+
+
+    @NotNull(message = "El ID del producto es obligatorio")
+    private Integer productoId;
 }

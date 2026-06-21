@@ -1,5 +1,6 @@
 package com.example.ms_inventario.dto.response;
 
+import com.example.ms_inventario.dto.external.ProductoDTO;
 import lombok.Data;
 import java.time.LocalDate;
 
@@ -11,4 +12,5 @@ public class InventarioResponseDTO {
     private Integer capacidadTotal;
     private boolean activo;
     private LocalDate fechaApertura;
+    private ProductoDTO producto;
 }
