@@ -42,6 +42,6 @@ public class Envio {
     @Column(name = "fecha_envio", nullable = false)
     private LocalDate fechaEnvio;
 
-    @Column(name = "fecha_estimada_entrega", nullable = false)
+    @Column(name = "fecha_estimada_entrega")
     private LocalDate fechaEstimadaEntrega;
 }

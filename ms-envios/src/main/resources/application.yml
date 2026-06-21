@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: ms-envios
+  datasource:
+    url: jdbc:mysql://localhost:3306/prueba5?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+server:
+  port: 8086
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+servicios:
+  pedidos:
+    url: http://localhost:8084
+  usuarios:
+    url: http://localhost:8081
+
+springdoc:
+  enable-hateoas: false
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.example.ms_envios: INFO

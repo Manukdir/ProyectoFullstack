@@ -269,3 +269,22 @@ databaseChangeLog:
               - column:
                   name: fecha_evento
                   valueDate: 2026-03-10 10:00:00
+  - changeSet:
+      id: 2-add-fecha-estimada-entrega-if-missing
+      author: luis
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: envios
+                columnName: fecha_estimada_entrega
+      changes:
+        - addColumn:
+            tableName: envios
+            columns:
+              - column:
+                  name: fecha_estimada_entrega
+                  type: DATE
+                  defaultValueDate: 2027-01-10
+                  constraints:
+                    nullable: false
