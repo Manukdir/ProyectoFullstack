@@ -3,9 +3,8 @@ package com.example.ms_sucursales.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @Entity
 @Table(name = "sucursales")
@@ -18,8 +17,11 @@ public class Sucursal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-        @Column(name = "region_id", nullable = false)
-    private Integer regionId;
+    @ManyToOne
+    @JoinColumn(name = "region_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Region region;
 
     @Column(name = "nombre", nullable = false, length = 150)
     private String nombre;
