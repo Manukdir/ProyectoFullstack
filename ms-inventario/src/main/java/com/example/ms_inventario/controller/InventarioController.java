@@ -5,11 +5,15 @@ import com.example.ms_inventario.dto.response.InventarioResponseDTO;
 import com.example.ms_inventario.service.InventarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/inventarios")
@@ -19,13 +23,30 @@ public class InventarioController {
     private final InventarioService inventarioService;
 
     @GetMapping
-    public ResponseEntity<List<InventarioResponseDTO>> listarTodos() {
-        return ResponseEntity.ok(inventarioService.listarTodos());
+    public ResponseEntity<CollectionModel<EntityModel<InventarioResponseDTO>>> listarTodos() {
+        List<EntityModel<InventarioResponseDTO>> inventarios = inventarioService.listarTodos().stream()
+                .map(inventario -> {
+                    inventario.removeLinks();
+                    inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).buscarPorId(inventario.getId())).withSelfRel());
+                    return EntityModel.of(inventario);
+                })
+                .collect(Collectors.toList());
+
+        CollectionModel<EntityModel<InventarioResponseDTO>> collectionModel = CollectionModel.of(inventarios,
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).listarTodos()).withSelfRel());
+
+        return ResponseEntity.ok(collectionModel);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InventarioResponseDTO> buscarPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(inventarioService.buscarPorId(id));
+    public ResponseEntity<EntityModel<InventarioResponseDTO>> buscarPorId(@PathVariable Integer id) {
+        InventarioResponseDTO inventario = inventarioService.buscarPorId(id);
+
+        inventario.removeLinks();
+        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).buscarPorId(id)).withSelfRel());
+        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).listarTodos()).withRel("inventarios"));
+
+        return ResponseEntity.ok(EntityModel.of(inventario));
     }
 
     @PostMapping
