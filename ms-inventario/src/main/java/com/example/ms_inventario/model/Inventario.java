@@ -20,6 +20,8 @@ public class Inventario {
     private boolean activo = true;
     private LocalDate fechaApertura;
 
+    private Integer productoId;
+
     @OneToMany(mappedBy = "inventario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MovimientoStock> movimientos;
 }

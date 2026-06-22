@@ -28,6 +28,12 @@ public class ProductoMapper {
         dto.setStock(entity.getStock());
         dto.setFechaIngreso(entity.getFechaIngreso());
         dto.setDisponible(entity.isDisponible());
+
+        if (entity.getCategoria() != null) {
+            dto.setCategoriaId(entity.getCategoria().getId());
+            dto.setCategoriaNombre(entity.getCategoria().getNombre());
+        }
+
         return dto;
     }
 }

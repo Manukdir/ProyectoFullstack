@@ -1,5 +1,7 @@
 package com.example.ms_inventario.service;
 
+import com.example.ms_inventario.client.ProductoClient;
+import com.example.ms_inventario.dto.external.ProductoDTO;
 import com.example.ms_inventario.dto.request.InventarioRequestDTO;
 import com.example.ms_inventario.dto.response.InventarioResponseDTO;
 import com.example.ms_inventario.exception.ResourceNotFoundException;
@@ -20,11 +22,22 @@ public class InventarioService {
 
     private final InventarioRepository inventarioRepository;
     private final InventarioMapper inventarioMapper;
+    private final ProductoClient productoClient;
 
     public List<InventarioResponseDTO> listarTodos() {
         log.info("Listando todos los inventarios");
         return inventarioRepository.findAll().stream()
-                .map(inventarioMapper::toResponseDTO)
+                .map(inventario -> {
+                    InventarioResponseDTO dto = inventarioMapper.toResponseDTO(inventario);
+                    if (inventario.getProductoId() != null) {
+                        try {
+                            dto.setProducto(productoClient.buscarPorId(inventario.getProductoId()));
+                        } catch (Exception e) {
+                            log.error("Error al obtener producto del ms-productos: {}", e.getMessage());
+                        }
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -32,13 +45,23 @@ public class InventarioService {
         log.info("Buscando inventario con ID: {}", id);
         Inventario inventario = inventarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventario no encontrado con ID: " + id));
-        return inventarioMapper.toResponseDTO(inventario);
+
+        InventarioResponseDTO dto = inventarioMapper.toResponseDTO(inventario);
+        if (inventario.getProductoId() != null) {
+            try {
+                dto.setProducto(productoClient.buscarPorId(inventario.getProductoId()));
+            } catch (Exception e) {
+                log.error("Error al obtener producto por ID del ms-productos: {}", e.getMessage());
+            }
+        }
+        return dto;
     }
 
     public InventarioResponseDTO guardar(InventarioRequestDTO dto) {
         try {
             log.info("Guardando nuevo inventario");
             Inventario inventario = inventarioMapper.toEntity(dto);
+            inventario.setProductoId(dto.getProductoId());
             return inventarioMapper.toResponseDTO(inventarioRepository.save(inventario));
         } catch (Exception e) {
             log.error("Error al guardar inventario: {}", e.getMessage());
@@ -56,6 +79,7 @@ public class InventarioService {
         inventario.setCapacidadTotal(dto.getCapacidadTotal());
         inventario.setActivo(dto.isActivo());
         inventario.setFechaApertura(dto.getFechaApertura());
+        inventario.setProductoId(dto.getProductoId());
 
         return inventarioMapper.toResponseDTO(inventarioRepository.save(inventario));
     }
