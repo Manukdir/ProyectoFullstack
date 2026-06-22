@@ -33,3 +33,13 @@ Microservicio encargado de administrar pedidos y sus detalles.
 ```
 
 El reporte JaCoCo se genera en `target/site/jacoco/index.html`.
+
+## Prueba rápida en Postman
+
+Con el servicio iniciado se puede probar:
+
+```http
+GET http://localhost:8084/api/v1/pedidos
+```
+
+Si responde con estado `200 OK`, el microservicio está funcionando.
