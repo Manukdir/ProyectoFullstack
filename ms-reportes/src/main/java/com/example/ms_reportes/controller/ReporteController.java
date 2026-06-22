@@ -58,4 +58,13 @@ public class ReporteController {
         }
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/consolidado")
+    public ResponseEntity<ReporteDTO> generarReporteConsolidado() {
+        ReporteDTO reporteGenerado = reporteService.generarReporteConsolidado();
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(reporteGenerado);
+    }
 }
