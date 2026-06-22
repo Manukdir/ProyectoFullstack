@@ -1,10 +1,14 @@
 package com.example.ms_productos.dto.response;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 
+import org.springframework.hateoas.RepresentationModel;
+
 @Data
-public class ProductoResponseDTO {
+@EqualsAndHashCode(callSuper = true)
+public class ProductoResponseDTO extends RepresentationModel<ProductoResponseDTO> {
     private Integer id;
     private String nombre;
     private String codigoSku;
