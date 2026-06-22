@@ -2,8 +2,6 @@ package com.example.ms_proveedores.controller;
 
 import com.example.ms_proveedores.dto.ProveedorDTO;
 import com.example.ms_proveedores.service.ProveedorService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -16,12 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * Entrega proveedores con enlaces HATEOAS para navegar por la API.
- */
 @RestController
 @RequestMapping("/api/v1/hateoas/proveedores")
-@Tag(name = "Proveedores HATEOAS", description = "Proveedores con enlaces de navegación")
 public class ProveedorHateoasController {
 
     private final ProveedorService proveedorService;
@@ -31,7 +25,6 @@ public class ProveedorHateoasController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar proveedores con enlaces HATEOAS")
     public ResponseEntity<CollectionModel<EntityModel<ProveedorDTO>>> listarConLinks() {
         List<EntityModel<ProveedorDTO>> proveedores = proveedorService.listar().stream()
                 .map(this::agregarLinks)
@@ -41,7 +34,6 @@ public class ProveedorHateoasController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener un proveedor con enlaces HATEOAS")
     public ResponseEntity<EntityModel<ProveedorDTO>> obtenerConLinks(@PathVariable Integer id) {
         ProveedorDTO proveedor = proveedorService.obtenerPorId(id);
         if (proveedor == null) {

@@ -6,9 +6,6 @@ import com.example.ms_proveedores.model.Proveedor;
 
 import org.springframework.stereotype.Component;
 
-/**
- * Convierte entre la entidad Proveedor y los DTO de entrada y salida.
- */
 @Component
 public class ProveedorMapper {
 

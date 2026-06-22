@@ -6,9 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-/**
- * Personaliza la documentación OpenAPI presentada por Swagger.
- */
 public class OpenApiConfig {
 
     @Bean

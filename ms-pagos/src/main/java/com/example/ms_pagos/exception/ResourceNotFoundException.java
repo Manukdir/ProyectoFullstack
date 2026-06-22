@@ -1,4 +1,4 @@
-package com.example.ms_proveedores.exception;
+package com.example.ms_pagos.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 

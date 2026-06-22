@@ -1,4 +1,4 @@
-package com.example.ms_proveedores.exception;
+package com.example.ms_pagos.exception;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -9,5 +9,5 @@ public record ApiError(
         String error,
         String message,
         String path,
-        Map<String, String> details) {
+        Map<String, String> validationErrors) {
 }

@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad que representa un pago en MySQL.
+ */
 @Entity
 @Table(name = "pagos")
 @Data
@@ -18,7 +21,7 @@ public class Pago {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-        @Column(name = "pedido_id", nullable = false)
+    @Column(name = "pedido_id", nullable = false)
     private Integer pedidoId;
 
     @Column(name = "metodo_pago", nullable = false, length = 150)

@@ -8,9 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Entidad JPA que representa la tabla proveedores.
- */
 @Entity
 @Table(name = "proveedores")
 @Data

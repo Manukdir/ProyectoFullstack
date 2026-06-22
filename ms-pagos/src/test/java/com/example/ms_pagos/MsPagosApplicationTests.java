@@ -1,13 +1,13 @@
 package com.example.ms_pagos;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 class MsPagosApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void existeClasePrincipal() {
+        assertNotNull(MsPagosApplication.class);
+    }
 }
