@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * Cliente Feign que obtiene usuarios desde el microservicio de usuarios.
  */
-@FeignClient(name = "MS-USUARIOS", url = "${servicios.usuarios.url}")
+@FeignClient(name = "MS-USUARIOS")
 public interface UsuarioClient {
 
     @GetMapping("/api/v1/usuarios/{id}")

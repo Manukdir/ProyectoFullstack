@@ -23,6 +23,18 @@ spring:
           filters:
             - StripPrefix=2
 
+        # Rutas del Microservicio de Pedidos
+        - id: pedidos-route
+          uri: lb://MS-PEDIDOS
+          predicates:
+            - Path=/api/v1/pedidos/**,/api/v1/detalles-pedido/**,/api/v1/hateoas/pedidos/**
+
+        # Rutas del Microservicio de Pagos
+        - id: pagos-route
+          uri: lb://MS-PAGOS
+          predicates:
+            - Path=/api/v1/pagos/**,/api/v1/hateoas/pagos/**
+
 eureka:
   client:
     service-url:

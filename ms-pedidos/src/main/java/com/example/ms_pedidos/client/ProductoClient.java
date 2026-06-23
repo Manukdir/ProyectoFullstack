@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * Cliente Feign utilizado para consultar productos desde pedidos.
  */
-@FeignClient(name = "MS-PRODUCTOS", url = "${servicios.productos.url}")
+@FeignClient(name = "MS-PRODUCTOS")
 public interface ProductoClient {
 
     @GetMapping("/api/v1/productos/{id}")
