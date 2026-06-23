@@ -1,8 +1,7 @@
 package com.example.ms_productos.service;
 
-import com.example.ms_productos.dto.request.ProductoRequestDTO;
-
-
+import com.example.ms_productos.client.InventarioClient;
+import com.example.ms_productos.dto.external.InventarioDTO;
 import com.example.ms_productos.dto.request.ProductoRequestDTO;
 import com.example.ms_productos.dto.response.ProductoResponseDTO;
 import com.example.ms_productos.exception.ResourceNotFoundException;
@@ -15,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +26,7 @@ public class ProductoService {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
     private final ProductoMapper productoMapper;
+    private final InventarioClient inventarioClient;
 
     public List<ProductoResponseDTO> listarTodos() {
         log.info("Listando todos los productos");
@@ -90,5 +91,27 @@ public class ProductoService {
         return productoRepository.findByNombreContainingIgnoreCaseAndPrecioLessThan(nombre, precio).stream()
                 .map(productoMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Comunicacion entre microservicios via OpenFeign.
+     * Busca el producto en la base local y, ademas, consulta a ms-inventario
+     * para saber en que bodegas hay stock registrado de ese producto.
+     * Si ms-inventario no responde, no se rompe la respuesta: simplemente
+     * se devuelve la lista de bodegas vacia y se deja un log del error.
+     */
+    public List<InventarioDTO> buscarInventarioDeProducto(Integer id) {
+        log.info("Consultando a ms-inventario el stock del producto con ID: {}", id);
+
+        // Primero verificamos que el producto exista en nuestra propia base.
+        productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+
+        try {
+            return inventarioClient.buscarPorProductoId(id);
+        } catch (Exception e) {
+            log.error("No se pudo contactar a ms-inventario para el producto {}: {}", id, e.getMessage());
+            return Collections.emptyList();
+        }
     }
 }

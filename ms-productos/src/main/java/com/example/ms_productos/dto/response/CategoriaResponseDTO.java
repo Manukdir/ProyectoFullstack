@@ -1,10 +1,18 @@
 package com.example.ms_productos.dto.response;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.time.LocalDate;
 
+/**
+ * Extiende RepresentationModel para poder agregarle enlaces HATEOAS
+ * (_links) en el Controller sin tocar los campos del DTO.
+ */
 @Data
-public class CategoriaResponseDTO {
+@EqualsAndHashCode(callSuper = true)
+public class CategoriaResponseDTO extends RepresentationModel<CategoriaResponseDTO> {
     private Integer id;
     private String nombre;
     private String descripcion;
