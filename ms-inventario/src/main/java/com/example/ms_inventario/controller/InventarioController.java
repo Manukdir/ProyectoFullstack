@@ -5,6 +5,8 @@ import com.example.ms_inventario.dto.response.InventarioResponseDTO;
 import com.example.ms_inventario.service.InventarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +32,7 @@ public class InventarioController {
 
     @Operation(summary = "Listar todos los inventarios", description = "Recupera una lista con todos los inventarios de las bodegas disponibles, incluyendo enlaces hipermedia (HATEOAS).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de inventarios obtenida exitosamente")
+            @ApiResponse(responseCode = "200", description = "Lista de inventarios obtenida exitosamente", content = @Content(mediaType = "application/json"))
     })
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<InventarioResponseDTO>>> listarTodos() {
@@ -50,8 +52,8 @@ public class InventarioController {
 
     @Operation(summary = "Buscar inventario por ID", description = "Obtiene los detalles de un registro de inventario específico mediante su identificador único.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Inventario encontrado de forma exitosa"),
-            @ApiResponse(responseCode = "404", description = "No se encontró ningún inventario con el ID proporcionado")
+            @ApiResponse(responseCode = "200", description = "Inventario encontrado de forma exitosa", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventarioResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontró ningún inventario con el ID proporcionado", content = @Content)
     })
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<InventarioResponseDTO>> buscarPorId(
@@ -68,8 +70,8 @@ public class InventarioController {
 
     @Operation(summary = "Registrar un nuevo inventario", description = "Crea un registro de inventario en una bodega específica. Realiza la validación remota de la existencia del producto mediante OpenFeign.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Inventario creado y registrado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Estructura de datos inválida o validación del producto fallida")
+            @ApiResponse(responseCode = "201", description = "Inventario creado y registrado exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventarioResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Estructura de datos inválida o validación del producto fallida", content = @Content)
     })
     @PostMapping
     public ResponseEntity<EntityModel<InventarioResponseDTO>> guardar(@Valid @RequestBody InventarioRequestDTO dto) {
@@ -84,9 +86,9 @@ public class InventarioController {
 
     @Operation(summary = "Actualizar un inventario existente", description = "Modifica los datos de una bodega o la asignación de un inventario existente localizando el registro mediante su ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Inventario actualizado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada incorrectos o inconsistentes"),
-            @ApiResponse(responseCode = "404", description = "No se encontró el inventario que se desea actualizar")
+            @ApiResponse(responseCode = "200", description = "Inventario actualizado exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventarioResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada incorrectos o inconsistentes", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No se encontró el inventario que se desea actualizar", content = @Content)
     })
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<InventarioResponseDTO>> actualizar(
@@ -105,8 +107,8 @@ public class InventarioController {
 
     @Operation(summary = "Eliminar un registro de inventario", description = "Borra físicamente del sistema el registro de inventario identificado por el ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Inventario eliminado exitosamente (Sin contenido de retorno)"),
-            @ApiResponse(responseCode = "404", description = "No se encontró el inventario que se desea eliminar")
+            @ApiResponse(responseCode = "204", description = "Inventario eliminado exitosamente (Sin contenido de retorno)", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No se encontró el inventario que se desea eliminar", content = @Content)
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(
