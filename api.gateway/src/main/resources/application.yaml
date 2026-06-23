@@ -12,12 +12,16 @@ spring:
           uri: lb://MS-PRODUCTOS
           predicates:
             - Path=/api/v1/productos/**
+          filters:
+            - StripPrefix=2
 
         # Ruta para el Microservicio de Inventario
         - id: inventario-route
           uri: lb://MS-INVENTARIO
           predicates:
             - Path=/api/v1/inventarios/**
+          filters:
+            - StripPrefix=2
 
 eureka:
   client:
