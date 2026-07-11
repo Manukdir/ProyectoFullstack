@@ -17,7 +17,7 @@ import java.util.List;
  *         (servicios.inventario.url). Si se quisiera resolver vía Eureka,
  *         bastaría con cambiar el atributo url por: url = "lb://MS-INVENTARIO"
  */
-@FeignClient(name = "MS-INVENTARIO", url = "${servicios.inventario.url}")
+@FeignClient(name = "MS-INVENTARIO")
 public interface InventarioClient {
 
     @GetMapping("/api/v1/inventarios/producto/{productoId}")
