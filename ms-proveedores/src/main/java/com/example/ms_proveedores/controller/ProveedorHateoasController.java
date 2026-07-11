@@ -1,6 +1,7 @@
 package com.example.ms_proveedores.controller;
 
 import com.example.ms_proveedores.dto.ProveedorDTO;
+import com.example.ms_proveedores.hateoas.ProveedorModelAssembler;
 import com.example.ms_proveedores.service.ProveedorService;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
@@ -19,15 +20,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class ProveedorHateoasController {
 
     private final ProveedorService proveedorService;
+    private final ProveedorModelAssembler assembler;
 
-    public ProveedorHateoasController(ProveedorService proveedorService) {
+    public ProveedorHateoasController(ProveedorService proveedorService, ProveedorModelAssembler assembler) {
         this.proveedorService = proveedorService;
+        this.assembler = assembler;
     }
 
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<ProveedorDTO>>> listarConLinks() {
         List<EntityModel<ProveedorDTO>> proveedores = proveedorService.listar().stream()
-                .map(this::agregarLinks)
+                .map(assembler::toModel)
                 .toList();
         return ResponseEntity.ok(CollectionModel.of(proveedores,
                 linkTo(methodOn(ProveedorHateoasController.class).listarConLinks()).withSelfRel()));
@@ -39,13 +42,6 @@ public class ProveedorHateoasController {
         if (proveedor == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(agregarLinks(proveedor));
-    }
-
-    private EntityModel<ProveedorDTO> agregarLinks(ProveedorDTO proveedor) {
-        return EntityModel.of(proveedor,
-                linkTo(methodOn(ProveedorHateoasController.class).obtenerConLinks(proveedor.getId())).withSelfRel(),
-                linkTo(methodOn(ProveedorHateoasController.class).listarConLinks()).withRel("proveedores"),
-                linkTo(ProveedorController.class).slash(proveedor.getId()).withRel("crud"));
+        return ResponseEntity.ok(assembler.toModel(proveedor));
     }
 }
