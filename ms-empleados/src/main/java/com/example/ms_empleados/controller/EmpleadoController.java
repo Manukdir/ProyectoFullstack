@@ -2,10 +2,13 @@ package com.example.ms_empleados.controller;
 
 import com.example.ms_empleados.dto.EmpleadoDTO;
 import com.example.ms_empleados.dto.EmpleadoRequestDTO;
+import com.example.ms_empleados.hateoas.EmpleadoModelAssembler;
 import com.example.ms_empleados.service.EmpleadoService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,8 @@ public class EmpleadoController {
     @Autowired
     private EmpleadoService empleadoService;
 
+    @Autowired
+    private EmpleadoModelAssembler empleadoModelAssembler;
 
     @GetMapping("/buscar")
         public ResponseEntity<List<EmpleadoDTO>> buscarPorSucursalYAnio(@RequestParam Integer sucursalId, @RequestParam Integer anio) {
@@ -24,35 +29,39 @@ public class EmpleadoController {
         }
 
     @GetMapping
-    public ResponseEntity<List<EmpleadoDTO>> listar() {
-        return ResponseEntity.ok(empleadoService.listar());
+    public ResponseEntity<CollectionModel<EntityModel<EmpleadoDTO>>> listar() {
+        List<EntityModel<EmpleadoDTO>> empleados = empleadoService.listar()
+                .stream()
+                .map(empleadoModelAssembler::toModel)
+                .toList();
+        return ResponseEntity.ok(CollectionModel.of(empleados));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmpleadoDTO> obtenerPorId(@PathVariable Integer id) {
+    public ResponseEntity<EntityModel<EmpleadoDTO>> obtenerPorId(@PathVariable Integer id) {
         EmpleadoDTO dto = empleadoService.obtenerPorId(id);
         if (dto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(empleadoModelAssembler.toModel(dto));
     }
 
     @PostMapping
-    public ResponseEntity<EmpleadoDTO> crear(@Valid @RequestBody EmpleadoRequestDTO requestDTO) {
+    public ResponseEntity<EntityModel<EmpleadoDTO>> crear(@Valid @RequestBody EmpleadoRequestDTO requestDTO) {
         EmpleadoDTO creado = empleadoService.crear(requestDTO);
         if (creado == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(empleadoModelAssembler.toModel(creado));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmpleadoDTO> actualizar(@PathVariable Integer id, @Valid @RequestBody EmpleadoRequestDTO requestDTO) {
+    public ResponseEntity<EntityModel<EmpleadoDTO>> actualizar(@PathVariable Integer id, @Valid @RequestBody EmpleadoRequestDTO requestDTO) {
         EmpleadoDTO actualizado = empleadoService.actualizar(id, requestDTO);
         if (actualizado == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(actualizado);
+        return ResponseEntity.ok(empleadoModelAssembler.toModel(actualizado));
     }
 
     @DeleteMapping("/{id}")
