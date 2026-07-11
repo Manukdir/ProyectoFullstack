@@ -1,8 +1,14 @@
 package com.example.ms_usuarios.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,27 +24,19 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-        @Column(name = "nombre", nullable = false, length = 150)
+    @Column(nullable = false, length = 120)
     private String nombre;
 
-    @Column(name = "email", nullable = false, length = 150)
+    @Column(nullable = false, unique = true, length = 120)
     private String email;
 
-    @Column(name = "telefono", nullable = false, length = 150)
+    @Column(nullable = false, length = 30)
     private String telefono;
 
-    @Column(name = "direccion_entrega", nullable = false, length = 150)
-    private String direccionEntrega;
-
-    @Column(name = "puntos_fidelidad", nullable = false)
-    private Integer puntosFidelidad;
-
-    @Column(name = "activo", nullable = false)
+    @Column(nullable = false)
     private Boolean activo;
 
-    @Column(name = "fecha_registro", nullable = false)
-    private LocalDate fechaRegistro;
-
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Perfil> perfiles;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "perfil_id", nullable = false)
+    private Perfil perfil;
 }

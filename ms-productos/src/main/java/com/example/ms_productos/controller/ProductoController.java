@@ -3,6 +3,7 @@ package com.example.ms_productos.controller;
 import com.example.ms_productos.dto.external.InventarioDTO;
 import com.example.ms_productos.dto.request.ProductoRequestDTO;
 import com.example.ms_productos.dto.response.ProductoResponseDTO;
+import com.example.ms_productos.hateoas.ProductoModelAssembler;
 import com.example.ms_productos.service.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 public class ProductoController {
 
     private final ProductoService productoService;
+    private final ProductoModelAssembler assembler;
 
     @Operation(summary = "Listar todos los productos")
     @ApiResponses({
@@ -64,13 +66,7 @@ public class ProductoController {
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<ProductoResponseDTO>>> listarTodos() {
         List<EntityModel<ProductoResponseDTO>> productos = productoService.listarTodos().stream()
-                .map(producto -> {
-                    producto.removeLinks();
-                    producto.add(WebMvcLinkBuilder.linkTo(
-                            WebMvcLinkBuilder.methodOn(ProductoController.class).buscarPorId(producto.getId())
-                    ).withSelfRel());
-                    return EntityModel.of(producto);
-                })
+                .map(assembler::toModel)
                 .collect(Collectors.toList());
 
         CollectionModel<EntityModel<ProductoResponseDTO>> collectionModel = CollectionModel.of(productos,
@@ -108,12 +104,7 @@ public class ProductoController {
     public ResponseEntity<EntityModel<ProductoResponseDTO>> buscarPorId(
             @Parameter(description = "ID del producto a buscar") @PathVariable Integer id) {
         ProductoResponseDTO producto = productoService.buscarPorId(id);
-
-        producto.removeLinks();
-        producto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductoController.class).buscarPorId(id)).withSelfRel());
-        producto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductoController.class).listarTodos()).withRel("productos"));
-
-        return ResponseEntity.ok(EntityModel.of(producto));
+        return ResponseEntity.ok(assembler.toModel(producto));
     }
 
     @Operation(summary = "Crear un nuevo producto")

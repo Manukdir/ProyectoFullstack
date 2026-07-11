@@ -2,6 +2,7 @@ package com.example.ms_inventario.controller;
 
 import com.example.ms_inventario.dto.request.InventarioRequestDTO;
 import com.example.ms_inventario.dto.response.InventarioResponseDTO;
+import com.example.ms_inventario.hateoas.InventarioModelAssembler;
 import com.example.ms_inventario.service.InventarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +15,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +23,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/inventarios")
+@RequestMapping("/api/v1/inventarios")
 @RequiredArgsConstructor
 @Tag(name = "Inventario Controller", description = "Endpoints para la gestión, control físico y asignación de bodegas de almacenamiento")
 public class InventarioController {
 
     private final InventarioService inventarioService;
+    private final InventarioModelAssembler assembler;
 
     @Operation(summary = "Listar todos los inventarios", description = "Recupera una lista con todos los inventarios de las bodegas disponibles, incluyendo enlaces hipermedia (HATEOAS).")
     @ApiResponses(value = {
@@ -37,15 +38,13 @@ public class InventarioController {
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<InventarioResponseDTO>>> listarTodos() {
         List<EntityModel<InventarioResponseDTO>> inventarios = inventarioService.listarTodos().stream()
-                .map(inventario -> {
-                    inventario.removeLinks();
-                    inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).buscarPorId(inventario.getId())).withSelfRel());
-                    return EntityModel.of(inventario);
-                })
+                .map(assembler::toModel)
                 .collect(Collectors.toList());
 
         CollectionModel<EntityModel<InventarioResponseDTO>> collectionModel = CollectionModel.of(inventarios,
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).listarTodos()).withSelfRel());
+                org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo(
+                        org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn(InventarioController.class)
+                                .listarTodos()).withSelfRel());
 
         return ResponseEntity.ok(collectionModel);
     }
@@ -60,12 +59,13 @@ public class InventarioController {
             @Parameter(description = "ID numérico del inventario a buscar", example = "1", required = true)
             @PathVariable Integer id) {
         InventarioResponseDTO inventario = inventarioService.buscarPorId(id);
+        return ResponseEntity.ok(assembler.toModel(inventario));
+    }
 
-        inventario.removeLinks();
-        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).buscarPorId(id)).withSelfRel());
-        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).listarTodos()).withRel("inventarios"));
-
-        return ResponseEntity.ok(EntityModel.of(inventario));
+    @Operation(summary = "Buscar inventarios por producto", description = "Endpoint usado por ms-productos mediante OpenFeign.")
+    @GetMapping("/producto/{productoId}")
+    public ResponseEntity<List<InventarioResponseDTO>> buscarPorProductoId(@PathVariable Integer productoId) {
+        return ResponseEntity.ok(inventarioService.buscarPorProductoId(productoId));
     }
 
     @Operation(summary = "Registrar un nuevo inventario", description = "Crea un registro de inventario en una bodega específica. Realiza la validación remota de la existencia del producto mediante OpenFeign.")
@@ -76,12 +76,7 @@ public class InventarioController {
     @PostMapping
     public ResponseEntity<EntityModel<InventarioResponseDTO>> guardar(@Valid @RequestBody InventarioRequestDTO dto) {
         InventarioResponseDTO inventario = inventarioService.guardar(dto);
-
-        inventario.removeLinks();
-        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).buscarPorId(inventario.getId())).withSelfRel());
-        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).listarTodos()).withRel("inventarios"));
-
-        return new ResponseEntity<>(EntityModel.of(inventario), HttpStatus.CREATED);
+        return new ResponseEntity<>(assembler.toModel(inventario), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Actualizar un inventario existente", description = "Modifica los datos de una bodega o la asignación de un inventario existente localizando el registro mediante su ID.")
@@ -97,12 +92,7 @@ public class InventarioController {
             @Valid @RequestBody InventarioRequestDTO dto) {
 
         InventarioResponseDTO inventario = inventarioService.actualizar(id, dto);
-
-        inventario.removeLinks();
-        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).buscarPorId(inventario.getId())).withSelfRel());
-        inventario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(InventarioController.class).listarTodos()).withRel("inventarios"));
-
-        return ResponseEntity.ok(EntityModel.of(inventario));
+        return ResponseEntity.ok(assembler.toModel(inventario));
     }
 
     @Operation(summary = "Eliminar un registro de inventario", description = "Borra físicamente del sistema el registro de inventario identificado por el ID.")

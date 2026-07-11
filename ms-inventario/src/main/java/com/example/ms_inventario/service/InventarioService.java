@@ -57,6 +57,13 @@ public class InventarioService {
         return dto;
     }
 
+    public List<InventarioResponseDTO> buscarPorProductoId(Integer productoId) {
+        log.info("Buscando inventarios por producto ID: {}", productoId);
+        return inventarioRepository.findByProductoId(productoId).stream()
+                .map(inventarioMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     public InventarioResponseDTO guardar(InventarioRequestDTO dto) {
         try {
             log.info("Guardando nuevo inventario");

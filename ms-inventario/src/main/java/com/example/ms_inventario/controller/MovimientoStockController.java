@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movimientos-stock")
+@RequestMapping("/api/v1/movimientos-stock")
 @RequiredArgsConstructor
 @Tag(name = "Movimientos de Stock Controller", description = "Endpoints para el registro, auditoría y filtrado de flujos de inventario (Ingresos y Egresos)")
 public class MovimientoStockController {
