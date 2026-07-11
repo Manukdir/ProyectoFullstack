@@ -298,3 +298,101 @@ databaseChangeLog:
                   defaultValueDate: 2027-01-10
                   constraints:
                     nullable: false
+  - changeSet:
+      id: 3-seed-envio-004
+      author: codex
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM envios WHERE codigo_seguimiento = 'CODIGOSEGUIMIENTO-004'
+      changes:
+        - insert:
+            tableName: envios
+            columns:
+              - column:
+                  name: pedido_id
+                  valueNumeric: 4
+              - column:
+                  name: usuario_id
+                  valueNumeric: 4
+              - column:
+                  name: codigo_seguimiento
+                  value: CODIGOSEGUIMIENTO-004
+              - column:
+                  name: direccion_destino
+                  value: direccionDestino 4
+              - column:
+                  name: transportista
+                  value: transportista 4
+              - column:
+                  name: costo_envio
+                  valueNumeric: 4000.00
+              - column:
+                  name: entregado
+                  valueBoolean: false
+              - column:
+                  name: fecha_envio
+                  valueDate: 2026-04-10
+              - column:
+                  name: fecha_estimada_entrega
+                  valueDate: 2027-04-10
+  - changeSet:
+      id: 4-seed-envio-005
+      author: codex
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM envios WHERE codigo_seguimiento = 'CODIGOSEGUIMIENTO-005'
+      changes:
+        - insert:
+            tableName: envios
+            columns:
+              - column:
+                  name: pedido_id
+                  valueNumeric: 5
+              - column:
+                  name: usuario_id
+                  valueNumeric: 5
+              - column:
+                  name: codigo_seguimiento
+                  value: CODIGOSEGUIMIENTO-005
+              - column:
+                  name: direccion_destino
+                  value: direccionDestino 5
+              - column:
+                  name: transportista
+                  value: transportista 5
+              - column:
+                  name: costo_envio
+                  valueNumeric: 5000.00
+              - column:
+                  name: entregado
+                  valueBoolean: false
+              - column:
+                  name: fecha_envio
+                  valueDate: 2026-05-10
+              - column:
+                  name: fecha_estimada_entrega
+                  valueDate: 2027-05-10
+  - changeSet:
+      id: 5-seed-seguimiento-004
+      author: codex
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM seguimientos s JOIN envios e ON s.envio_id = e.id WHERE e.codigo_seguimiento = 'CODIGOSEGUIMIENTO-004' AND s.orden = 40
+      changes:
+        - sql: INSERT INTO seguimientos (envio_id, estado, descripcion, ubicacion, orden, visible_cliente, fecha_evento) SELECT id, 'EN_TRANSITO', 'descripcion 4', 'ubicacion 4', 40, true, '2026-04-10 10:00:00' FROM envios WHERE codigo_seguimiento = 'CODIGOSEGUIMIENTO-004'
+  - changeSet:
+      id: 6-seed-seguimiento-005
+      author: codex
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM seguimientos s JOIN envios e ON s.envio_id = e.id WHERE e.codigo_seguimiento = 'CODIGOSEGUIMIENTO-005' AND s.orden = 50
+      changes:
+        - sql: INSERT INTO seguimientos (envio_id, estado, descripcion, ubicacion, orden, visible_cliente, fecha_evento) SELECT id, 'CREADO', 'descripcion 5', 'ubicacion 5', 50, true, '2026-05-10 10:00:00' FROM envios WHERE codigo_seguimiento = 'CODIGOSEGUIMIENTO-005'

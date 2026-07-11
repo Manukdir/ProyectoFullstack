@@ -50,12 +50,22 @@ public class GlobalExceptionHandler {
                 request.getRequestURI(), Map.of());
     }
 
+    @ExceptionHandler(RemoteServiceException.class)
+    public ResponseEntity<ApiError> servicioRemoto(
+            RemoteServiceException exception,
+            HttpServletRequest request) {
+        log.error("Error al validar datos remotos", exception);
+        return build(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage(),
+                request.getRequestURI(), Map.of());
+    }
+
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ApiError> errorFeign(
             FeignException exception,
             HttpServletRequest request) {
         log.error("Error al comunicarse con pedidos", exception);
-        return build(HttpStatus.BAD_GATEWAY, "No fue posible comunicarse con pedidos",
+        HttpStatus status = mapFeignStatus(exception.status());
+        return build(status, mensajeFeign(status),
                 request.getRequestURI(), Map.of());
     }
 
@@ -81,5 +91,28 @@ public class GlobalExceptionHandler {
                 path,
                 errors);
         return ResponseEntity.status(status).body(body);
+    }
+
+    private HttpStatus mapFeignStatus(int status) {
+        if (status == HttpStatus.NOT_FOUND.value()) {
+            return HttpStatus.NOT_FOUND;
+        }
+        if (status == -1
+                || status == HttpStatus.REQUEST_TIMEOUT.value()
+                || status == HttpStatus.SERVICE_UNAVAILABLE.value()
+                || status == HttpStatus.GATEWAY_TIMEOUT.value()) {
+            return HttpStatus.SERVICE_UNAVAILABLE;
+        }
+        return HttpStatus.BAD_GATEWAY;
+    }
+
+    private String mensajeFeign(HttpStatus status) {
+        if (status == HttpStatus.NOT_FOUND) {
+            return "El recurso remoto solicitado no existe";
+        }
+        if (status == HttpStatus.SERVICE_UNAVAILABLE) {
+            return "El microservicio remoto no esta disponible";
+        }
+        return "No fue posible comunicarse con pedidos";
     }
 }

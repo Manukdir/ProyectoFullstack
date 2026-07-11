@@ -1,16 +1,18 @@
 package com.example.ms_pagos.service;
 
+import com.example.ms_pagos.client.PedidoClient;
 import com.example.ms_pagos.dto.PagoDTO;
 import com.example.ms_pagos.dto.PagoRequestDTO;
+import com.example.ms_pagos.exception.RemoteServiceException;
 import com.example.ms_pagos.exception.ResourceNotFoundException;
 import com.example.ms_pagos.mapper.PagoMapper;
 import com.example.ms_pagos.model.Pago;
 import com.example.ms_pagos.repository.PagoRepository;
+import feign.FeignException;
 import java.math.BigDecimal;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,11 +23,15 @@ public class PagoService {
 
     private static final Logger log = LoggerFactory.getLogger(PagoService.class);
 
-    @Autowired
-    private PagoRepository pagoRepository;
+    private final PagoRepository pagoRepository;
+    private final PagoMapper pagoMapper;
+    private final PedidoClient pedidoClient;
 
-    @Autowired
-    private PagoMapper pagoMapper;
+    public PagoService(PagoRepository pagoRepository, PagoMapper pagoMapper, PedidoClient pedidoClient) {
+        this.pagoRepository = pagoRepository;
+        this.pagoMapper = pagoMapper;
+        this.pedidoClient = pedidoClient;
+    }
 
     public List<PagoDTO> listar() {
         log.info("Listando pagos");
@@ -42,6 +48,7 @@ public class PagoService {
     }
 
     public PagoDTO crear(PagoRequestDTO dto) {
+        validarPedidoExiste(dto.getPedidoId());
         Pago pago = pagoMapper.toEntity(dto);
         Pago guardado = pagoRepository.save(pago);
         log.info("Pago creado con id {}", guardado.getId());
@@ -51,6 +58,7 @@ public class PagoService {
     public PagoDTO actualizar(Integer id, PagoRequestDTO dto) {
         Pago pago = pagoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe el pago con id " + id));
+        validarPedidoExiste(dto.getPedidoId());
         pagoMapper.updateEntity(pago, dto);
         Pago guardado = pagoRepository.save(pago);
         log.info("Pago actualizado con id {}", guardado.getId());
@@ -71,5 +79,15 @@ public class PagoService {
         return pagoRepository.buscarPorMontoYEstado(montoMinimo, estadoPago).stream()
                 .map(pagoMapper::toDTO)
                 .toList();
+    }
+
+    private void validarPedidoExiste(Integer pedidoId) {
+        try {
+            pedidoClient.obtenerPedido(pedidoId);
+        } catch (FeignException.NotFound exception) {
+            throw new ResourceNotFoundException("No existe el pedido con id " + pedidoId);
+        } catch (FeignException exception) {
+            throw new RemoteServiceException("No fue posible validar el pedido con id " + pedidoId, exception);
+        }
     }
 }

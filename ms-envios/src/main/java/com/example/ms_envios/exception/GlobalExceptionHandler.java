@@ -44,11 +44,17 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "La operación genera un conflicto de datos", request, Map.of());
     }
 
+    @ExceptionHandler(RemoteServiceException.class)
+    public ResponseEntity<ApiError> handleRemoteService(RemoteServiceException ex, HttpServletRequest request) {
+        log.error("Error al validar datos remotos", ex);
+        return build(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), request, Map.of());
+    }
+
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ApiError> handleFeign(FeignException ex, HttpServletRequest request) {
         log.error("Error al comunicarse con otro microservicio", ex);
-        return build(HttpStatus.BAD_GATEWAY,
-                "No fue posible comunicarse con el microservicio remoto", request, Map.of());
+        HttpStatus status = mapFeignStatus(ex.status());
+        return build(status, feignMessage(status), request, Map.of());
     }
 
     @ExceptionHandler(Exception.class)
@@ -68,5 +74,28 @@ public class GlobalExceptionHandler {
                 request.getRequestURI(),
                 details);
         return ResponseEntity.status(status).body(error);
+    }
+
+    private HttpStatus mapFeignStatus(int status) {
+        if (status == HttpStatus.NOT_FOUND.value()) {
+            return HttpStatus.NOT_FOUND;
+        }
+        if (status == -1
+                || status == HttpStatus.REQUEST_TIMEOUT.value()
+                || status == HttpStatus.SERVICE_UNAVAILABLE.value()
+                || status == HttpStatus.GATEWAY_TIMEOUT.value()) {
+            return HttpStatus.SERVICE_UNAVAILABLE;
+        }
+        return HttpStatus.BAD_GATEWAY;
+    }
+
+    private String feignMessage(HttpStatus status) {
+        if (status == HttpStatus.NOT_FOUND) {
+            return "El recurso remoto solicitado no existe";
+        }
+        if (status == HttpStatus.SERVICE_UNAVAILABLE) {
+            return "El microservicio remoto no esta disponible";
+        }
+        return "No fue posible comunicarse con el microservicio remoto";
     }
 }

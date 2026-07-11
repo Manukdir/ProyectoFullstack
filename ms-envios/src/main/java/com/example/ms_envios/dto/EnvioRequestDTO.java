@@ -47,6 +47,6 @@ public class EnvioRequestDTO {
         private LocalDate fechaEnvio;
     @Schema(description = "Fecha estimada de entrega", example = "2027-06-25")
     @NotNull(message = "El campo fechaEstimadaEntrega es obligatorio")
-        @Future(message = "El campo fechaEstimadaEntrega debe ser futura")
+        @FutureOrPresent(message = "El campo fechaEstimadaEntrega debe ser actual o futura")
         private LocalDate fechaEstimadaEntrega;
 }

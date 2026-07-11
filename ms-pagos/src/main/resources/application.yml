@@ -1,22 +1,8 @@
 spring:
-  # Nombre con el que pagos se registra en Eureka.
   application:
     name: MS-PAGOS
-  datasource:
-    url: jdbc:mysql://localhost:3306/prueba4?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
+  profiles:
+    default: dev
 
 server:
   port: 8085

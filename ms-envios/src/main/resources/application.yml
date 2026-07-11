@@ -1,29 +1,13 @@
 spring:
-  # Nombre usado para registrar el servicio en Eureka.
   application:
     name: MS-ENVIOS
-  # Base de datos local ejecutada mediante Laragon.
-  datasource:
-    url: jdbc:mysql://localhost:3306/prueba5?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+  profiles:
+    default: dev
 
 server:
   port: 8086
 
 eureka:
-  # Habilita el registro y la consulta de servicios disponibles.
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -31,11 +15,6 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-
-servicios:
-  # URL del servicio externo que aún no está registrado en Eureka.
-  usuarios:
-    url: http://localhost:8081
 
 springdoc:
   swagger-ui:
