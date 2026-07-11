@@ -6,34 +6,58 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      routes:
-        # Ruta para el Microservicio de Productos
-        - id: productos-route
-          uri: lb://MS-PRODUCTOS
-          predicates:
-            - Path=/api/v1/productos/**
-          filters:
-            - StripPrefix=2
+      server:
+        webflux:
+          routes:
+            - id: usuarios-route
+              uri: lb://MS-USUARIOS
+              predicates:
+                - Path=/api/v1/usuarios/**,/api/v1/perfiles/**
 
-        # Ruta para el Microservicio de Inventario
-        - id: inventario-route
-          uri: lb://MS-INVENTARIO
-          predicates:
-            - Path=/api/v1/inventarios/**
-          filters:
-            - StripPrefix=2
+            - id: productos-route
+              uri: lb://MS-PRODUCTOS
+              predicates:
+                - Path=/api/v1/productos/**,/api/v1/categorias/**
 
-        # Rutas del Microservicio de Pedidos
-        - id: pedidos-route
-          uri: lb://MS-PEDIDOS
-          predicates:
-            - Path=/api/v1/pedidos/**,/api/v1/detalles-pedido/**,/api/v1/hateoas/pedidos/**
+            - id: inventario-route
+              uri: lb://MS-INVENTARIO
+              predicates:
+                - Path=/api/v1/inventarios/**,/api/v1/movimientos-stock/**
 
-        # Rutas del Microservicio de Pagos
-        - id: pagos-route
-          uri: lb://MS-PAGOS
-          predicates:
-            - Path=/api/v1/pagos/**,/api/v1/hateoas/pagos/**
+            - id: pedidos-route
+              uri: lb://MS-PEDIDOS
+              predicates:
+                - Path=/api/v1/pedidos/**,/api/v1/detalles-pedido/**,/api/v1/hateoas/pedidos/**
+
+            - id: pagos-route
+              uri: lb://MS-PAGOS
+              predicates:
+                - Path=/api/v1/pagos/**,/api/v1/hateoas/pagos/**
+
+            - id: envios-route
+              uri: lb://MS-ENVIOS
+              predicates:
+                - Path=/api/v1/envios/**,/api/v1/seguimientos/**,/api/v1/hateoas/envios/**
+
+            - id: proveedores-route
+              uri: lb://MS-PROVEEDORES
+              predicates:
+                - Path=/api/v1/proveedores/**,/api/v1/contratos/**,/api/v1/hateoas/proveedores/**
+
+            - id: empleados-route
+              uri: lb://MS-EMPLEADOS
+              predicates:
+                - Path=/api/v1/empleados/**
+
+            - id: sucursales-route
+              uri: lb://MS-SUCURSALES
+              predicates:
+                - Path=/api/v1/sucursales/**,/api/v1/regiones/**
+
+            - id: reportes-route
+              uri: lb://MS-REPORTES
+              predicates:
+                - Path=/api/v1/reportes/**
 
 eureka:
   client:
@@ -46,4 +70,4 @@ eureka:
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
